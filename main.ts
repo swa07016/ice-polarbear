@@ -10,16 +10,17 @@ const polarBearTwo = ScriptApp.loadSpritesheet('polar-bear-2.png', 240, 270);
 const DOWN_SPEED = 10; // 다운스피드 상수
 let down_speed = 1; //
 let GAME_STATE = 'READY'; // READY, PLAYING, END
+let LOOSER_NAME = '';
+
 
 ScriptApp.onSay.Add(function (player, text) {
     if(text == 'PLAY') {
-        GAME_STATE = 'PLAY';
+        GAME_STATE = 'PLAYING';
         let players = ScriptApp.players;
         players.forEach(function (p) {
             p.tag.ready = true;
             p.title = 'SAVE ME!!';
             p.sendUpdated();
-
         })
     }
 });
@@ -40,7 +41,10 @@ ScriptApp.onJoinPlayer.Add(function (p) {
 // x키를 눌렀을 때 처리
 ScriptApp.addOnKeyDown(88, function (p) {
     if(!p.tag.ready) return ;
-    p.spawnAt(p.tileX, p.tileY-1, 2);
+    if(p.tag.alive) p.spawnAt(p.tileX, p.tileY-1, 2);
+    else { // todo: 여기서 못움직이도록 키를 예외처리 해야하나?
+
+    }
 })
 
 ScriptApp.onUpdate.Add(function(dt){
@@ -51,6 +55,12 @@ ScriptApp.onUpdate.Add(function(dt){
 
         case 'PLAYING':
             ScriptApp.showCenterLabel("X키를 눌러 북극곰을 살려주세요!");
+            break;
+
+        case 'END':
+            ScriptApp.showCenterLabel(`꼴찌는 ${LOOSER_NAME}..`);
+            return ;
+            break;
     }
 
 
@@ -59,8 +69,10 @@ ScriptApp.onUpdate.Add(function(dt){
     players.forEach(player => {
         if(player.tileY >= ScriptMap.height) {
             player.tag.alive = false;
-            player.title = `I'll be back..`;
+            player.title = `꾸엑..`;
             player.sendUpdated();
+            LOOSER_NAME = player.name;
+            GAME_STATE = 'END';
         }
     })
 
