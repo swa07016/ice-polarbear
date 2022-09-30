@@ -14,7 +14,7 @@ let LOOSER_NAME = '';
 
 const getTileXList = (playerCount) => {
     const interval = (ScriptMap.width - 10)/playerCount;
-    let x = 5;
+    let x = 10;
     let tileXList = [5];
     for(let i=0; i<playerCount-1; i++) {
         tileXList.push(Math.round(x+interval));
@@ -22,7 +22,6 @@ const getTileXList = (playerCount) => {
     }
     return tileXList;
 }
-
 
 ScriptApp.onSay.Add(function (player, text) {
     if(text == 'PLAY') {
@@ -53,7 +52,7 @@ ScriptApp.onJoinPlayer.Add(function (p) {
 });
 
 // x키를 눌렀을 때 처리
-ScriptApp.addOnKeyDown(88, function (p) {
+ScriptApp.addOnKeyDown(16, function (p) {
     if(!p.tag.ready) return ;
     if(p.tag.alive) p.spawnAt(p.tileX, p.tileY-1, 2);
     else { // todo: 여기서 못움직이도록 키를 예외처리 해야하나?
@@ -68,7 +67,7 @@ ScriptApp.onUpdate.Add(function(dt){
             break;
 
         case 'PLAYING':
-            ScriptApp.showCenterLabel("X키를 눌러 북극곰을 살려주세요!");
+            ScriptApp.showCenterLabel("Shift키를 눌러 북극곰을 살려주세요!");
             break;
 
         case 'END':
