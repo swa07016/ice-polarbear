@@ -18,8 +18,10 @@ ScriptApp.onSay.Add(function (player, text) {
         GAME_STATE = 'PLAYING';
         let players = ScriptApp.players;
         players.forEach(function (p) {
+            p.spawnAt(32, 20, 2);
             p.tag.ready = true;
-            p.title = 'SAVE ME!!';
+            p.tag.alive = true;
+            p.title = '구해줘!!';
             p.sendUpdated();
         })
     }
@@ -34,7 +36,7 @@ ScriptApp.onJoinPlayer.Add(function (p) {
         alive: true,
         ready: false
     }
-    p.title = 'READY!';
+    p.title = '준비중..';
     p.sendUpdated();
 });
 
@@ -59,10 +61,16 @@ ScriptApp.onUpdate.Add(function(dt){
 
         case 'END':
             ScriptApp.showCenterLabel(`꼴찌는 ${LOOSER_NAME}..`);
+            let players = ScriptApp.players;
+            players.forEach(function (p) {
+                p.spawnAt(32, 20, 2);
+            })
+            setTimeout(function () {
+                GAME_STATE = 'READY';
+            }, 2500);
             return ;
             break;
     }
-
 
     down_speed++;
     let players = ScriptApp.players;
