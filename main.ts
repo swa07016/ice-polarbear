@@ -9,6 +9,20 @@ const polarBearTwo = ScriptApp.loadSpritesheet('polar-bear-2.png', 240, 270);
 
 const DOWN_SPEED = 10; // 다운스피드 상수
 let down_speed = 1; //
+let GAME_STATE = 'READY'; // READY, PLAYING, END
+
+ScriptApp.onSay.Add(function (player, text) {
+    if(text == 'PLAY') {
+        GAME_STATE = 'PLAY';
+        let players = ScriptApp.players;
+        players.forEach(function (p) {
+            p.tag.ready = true;
+            p.title = 'SAVE ME!!';
+            p.sendUpdated();
+
+        })
+    }
+});
 
 // 플레이어가 해당 맵에 들어왔을 때 처리
 ScriptApp.onJoinPlayer.Add(function (p) {
@@ -21,12 +35,6 @@ ScriptApp.onJoinPlayer.Add(function (p) {
     }
     p.title = 'READY!';
     p.sendUpdated();
-
-    setTimeout(function () {
-        p.tag.ready = true;
-        p.title = 'SAVE ME!!';
-        p.sendUpdated();
-    }, 4000)
 });
 
 // x키를 눌렀을 때 처리
@@ -36,7 +44,16 @@ ScriptApp.addOnKeyDown(88, function (p) {
 })
 
 ScriptApp.onUpdate.Add(function(dt){
-    ScriptApp.showCenterLabel("Press 'x' to save the polar bear!");
+    switch (GAME_STATE) {
+        case 'READY':
+            ScriptApp.showCenterLabel("팀원이 다 모이면 채팅창에 PLAY를 입력해주세요!");
+            break;
+
+        case 'PLAYING':
+            ScriptApp.showCenterLabel("X키를 눌러 북극곰을 살려주세요!");
+    }
+
+
     down_speed++;
     let players = ScriptApp.players;
     players.forEach(player => {
