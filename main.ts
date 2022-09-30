@@ -12,13 +12,25 @@ let down_speed = 1; //
 let GAME_STATE = 'READY'; // READY, PLAYING, END
 let LOOSER_NAME = '';
 
+const getTileXList = (playerCount) => {
+    const interval = (ScriptMap.width - 10)/playerCount;
+    let x = 5;
+    let tileXList = [5];
+    for(let i=0; i<playerCount-1; i++) {
+        tileXList.push(Math.round(x+interval));
+        x = x + interval;
+    }
+    return tileXList;
+}
+
 
 ScriptApp.onSay.Add(function (player, text) {
     if(text == 'PLAY') {
         GAME_STATE = 'PLAYING';
         let players = ScriptApp.players;
-        players.forEach(function (p) {
-            p.spawnAt(32, 20, 2);
+        const tileXList = getTileXList(players.length);
+        players.forEach(function (p, index) {
+            p.spawnAt(tileXList[index], 20, 2);
             p.tag.ready = true;
             p.tag.alive = true;
             p.title = '구해줘!!';
@@ -62,8 +74,9 @@ ScriptApp.onUpdate.Add(function(dt){
         case 'END':
             ScriptApp.showCenterLabel(`꼴찌는 ${LOOSER_NAME}..`);
             let players = ScriptApp.players;
-            players.forEach(function (p) {
-                p.spawnAt(32, 20, 2);
+            const tileXList = getTileXList(players.length);
+            players.forEach(function (p, index) {
+                p.spawnAt(tileXList[index], 20, 2);
             })
             setTimeout(function () {
                 GAME_STATE = 'READY';
@@ -71,6 +84,7 @@ ScriptApp.onUpdate.Add(function(dt){
             return ;
             break;
     }
+    // 32 최대 63
 
     down_speed++;
     let players = ScriptApp.players;
