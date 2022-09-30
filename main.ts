@@ -25,3 +25,13 @@ ScriptApp.onJoinPlayer.Add(function (p) {
         p.sendUpdated();
     }, 4000)
 });
+
+// x키를 눌렀을 때 처리
+ScriptApp.addOnKeyDown(88, function (p) {
+    if(!p.tag.ready) return ;
+    p.spawnAt(p.tileX, p.tileY-1, 2);
+})
+
+ScriptApp.onStart.Add(function(){
+
+});
